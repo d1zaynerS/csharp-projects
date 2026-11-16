@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Створити розсилку";
+    var selectedEmails = ViewBag.SelectedEmails as List<string> ?? new List<string>();
+}
+
+<link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
+
+<div class="container mt-4">
+    <h2>Створення розсилки</h2>
+
+    <form asp-action="SendEmail" method="post">
+        @Html.AntiForgeryToken()
+
+        @if (selectedEmails.Any())
+        {
+            <div class="mb-3">
+                <label class="form-label">Отримувачі (@selectedEmails.Count):</label>
+                <div>
+                    @foreach (var email in selectedEmails)
+                    {
+                        <span class="badge bg-secondary me-1">@email</span>
+                        <input type="hidden" name="selectedEmails" value="@email" />
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">Лист буде надіслано **усім** підписникам.</p>
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Тема листа *</label>
+            <input type="text" name="subject" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Текст листа (HTML) *</label>
+            <textarea id="froala-editor" name="body"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">Надіслати лист</button>
+        <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+    </form>
+</div>
+
+<script>
+    new FroalaEditor('#froala-editor', {
+        heightMin: 250
+    });
+</script>

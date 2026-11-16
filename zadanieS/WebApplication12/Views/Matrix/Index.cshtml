@@ -1,0 +1,54 @@
+@{
+    int size = ViewBag.Size ?? 3;
+}
+
+<h2>Операції з матрицями</h2>
+
+<form method="get" asp-action="Index">
+    <label>Виберіть розмір:</label>
+    <select name="size" onchange="this.form.submit()">
+        <option value="3" selected="@(size == 3)">3x3</option>
+        <option value="6" selected="@(size == 6)">6x6</option>
+        <option value="9" selected="@(size == 9)">9x9</option>
+    </select>
+</form>
+
+<form method="post" action="~/Matrix/Calculate" class="mt-4">
+    <input type="hidden" name="size" value="@size" />
+
+    <div class="mb-3">
+        <label>Операція:</label>
+        @Html.RadioButton("operation", "Add", true) <span>Додавання</span>
+        @Html.RadioButton("operation", "Multiply", false) <span>Множення</span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Матриця A</h4>
+            @for (int i = 0; i < size; i++)
+            {
+                <div class="d-flex mb-1">
+                    @for (int j = 0; j < size; j++)
+                    {
+                        @Html.TextBox($"a_{i}_{j}", "0", new { type = "number", style = "width: 50px;", @class = "me-1 text-center" })
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <h4>Матриця B</h4>
+            @for (int i = 0; i < size; i++)
+            {
+                <div class="d-flex mb-1">
+                    @for (int j = 0; j < size; j++)
+                    {
+                        @Html.TextBox($"b_{i}_{j}", "0", new { type = "number", style = "width: 50px;", @class = "me-1 text-center" })
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Обчислити</button>
+</form>

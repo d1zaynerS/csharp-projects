@@ -1,0 +1,74 @@
+﻿@model Blog.Models.Publication
+
+@{
+    ViewData["Title"] = Model.Title;
+    var comments = ViewBag.Comments as List<Blog.Models.Comment> ?? new List<Blog.Models.Comment>();
+}
+
+<div class="container mt-4">
+    <h2>@Model.Title</h2>
+    <p class="text-muted">Переглядів: @Model.TotalViews</p>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <div class="text-center mb-4">
+            <img src="@Model.ImagePath" class="img-fluid rounded" style="max-height: 400px;" alt="@Model.Title" />
+        </div>
+    }
+
+    <div class="mb-4">
+        @Html.Raw(Model.Content)
+    </div>
+
+    <hr />
+    <h3>Коментарі (@comments.Count)</h3>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <form asp-action="AddComment" method="post" class="card p-3 mb-4 shadow-sm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="publicationId" value="@Model.Id" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Ім'я *</label>
+                <input type="text" name="authorName" class="form-control" required />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Email (необов'язково)</label>
+                <input type="email" name="email" class="form-control" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Повідомлення *</label>
+            <textarea name="message" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <div class="mb-3 w-50">
+            <label class="form-label">Розв'яжіть капчу: <strong>@ViewBag.CaptchaQuestion</strong> *</label>
+            <input type="number" name="captchaInput" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-success">Додати коментар</button>
+    </form>
+
+    <div class="comments-list">
+        @foreach (var c in comments)
+        {
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="card-title mb-1"><strong>@c.AuthorName</strong></h6>
+                        <small class="text-muted">@c.CreatedAt.ToString("g")</small>
+                    </div>
+                    <p class="card-text mb-0">@c.Message</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

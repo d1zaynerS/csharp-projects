@@ -1,0 +1,74 @@
+﻿@model MultyFormMessage.Models.EmailSendViewModel
+
+<h2>Надіслати електронний лист</h2>
+
+@if (ViewBag.Status != null)
+{
+    <div class="alert alert-success">@ViewBag.Status</div>
+}
+
+<form asp-controller="Message" asp-action="Send" method="post" enctype="multipart/form-data" class="col-md-6 mt-3">
+    <div class="form-group mb-3">
+        <label>Адресати (через кому):</label>
+        <input asp-for="ToAddresses" class="form-control" placeholder="example@gmail.com, test@ukr.net" />
+        <span asp-validation-for="ToAddresses" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Тема листа:</label>
+        <input asp-for="Subject" class="form-control" />
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Текст листа:</label>
+        <textarea asp-for="Content" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Вкладення (перетягніть файли або виберіть):</label>
+        <div id="drop-zone" style="border: 2px dashed #007bff; padding: 20px; text-align: center; background-color: #f8f9fa; cursor: pointer;">
+            Перетягніть файли сюди або натисніть для вибору
+            <input type="file" asp-for="Attachments" id="file-input" multiple style="display: none;" />
+        </div>
+        <div id="file-list" class="mt-2 text-muted"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Надіслати</button>
+</form>
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', () => {
+        fileList.innerHTML = '';
+        for (let i = 0; i < fileInput.files.length; i++) {
+            fileList.innerHTML += `<div>📄 ${fileInput.files[i].name}</div>`;
+        }
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '#e2e6ea';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.backgroundColor = '#f8f9fa';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '#f8f9fa';
+        fileInput.files = e.dataTransfer.files;
+
+        fileList.innerHTML = '';
+        for (let i = 0; i < fileInput.files.length; i++) {
+            fileList.innerHTML += `<div>📄 ${fileInput.files[i].name}</div>`;
+        }
+    });
+</script>

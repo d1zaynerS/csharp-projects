@@ -1,0 +1,28 @@
+﻿@model IEnumerable<MultyFormMessage.Models.TodoItem>
+
+<h2>TODO Список (Завдання)</h2>
+
+<form asp-controller="Todo" asp-action="Create" method="post" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input type="text" name="Title" class="form-control" placeholder="Нове завдання..." required />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Додати</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <tr>
+        <th>Завдання</th>
+        <th>Час створення (CreatedAt)</th>
+        <th>Останнє оновлення (LastUpdatedAt)</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Title</td>
+            <td>@item.CreatedAt.ToString("g")</td>
+            <td>@item.LastUpdatedAt.ToString("g")</td>
+        </tr>
+    }
+</table>

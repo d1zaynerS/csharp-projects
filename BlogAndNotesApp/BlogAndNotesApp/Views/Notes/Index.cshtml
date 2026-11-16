@@ -1,0 +1,27 @@
+﻿@model List<BlogAndNotesApp.Models.Note>
+
+<h2>Нотатки</h2>
+<p>Остання вибрана категорія зберігається в Cookie: <strong>@ViewBag.SelectedCategory</strong></p>
+
+<div class="btn-group mb-3">
+    @foreach (var cat in (List<string>)ViewBag.Categories)
+    {
+        <a asp-action="Index" asp-route-category="@cat"
+           class="btn @(ViewBag.SelectedCategory == cat ? "btn-primary" : "btn-outline-primary")">
+            @cat
+        </a>
+    }
+</div>
+
+<div class="row">
+    @foreach (var note in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h4>@note.Title</h4>
+                <span class="badge bg-secondary mb-2">@note.Category</span>
+                <p>@note.Content</p>
+            </div>
+        </div>
+    }
+</div>

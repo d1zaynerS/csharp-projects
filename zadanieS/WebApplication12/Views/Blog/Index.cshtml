@@ -1,0 +1,8 @@
+@model IEnumerable<WebApplication12.Models.BlogPost>
+
+<h2>Блог статей</h2>
+
+@foreach (var post in Model)
+{
+    <blog-preview title="@post.Title" content="@post.Content" max-length="150"></blog-preview>
+}

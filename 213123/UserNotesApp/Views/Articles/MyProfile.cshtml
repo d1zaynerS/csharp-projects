@@ -1,0 +1,39 @@
+@model IEnumerable<UserNotesApp.Models.Article>
+
+@{
+    ViewData["Title"] = "Профіль користувача";
+}
+
+<div class="container mt-4">
+    <h2>Профіль користувача</h2>
+    
+    <div class="card p-3 mb-4 shadow-sm">
+        <p><strong>Email (Логін):</strong> @ViewBag.UserEmail</p>
+        <p><strong>Рік народження:</strong> @ViewBag.UserYear</p>
+        <div>
+            <a asp-controller="Account" asp-action="Edit" class="btn btn-outline-primary btn-sm">Редагувати дані</a>
+            <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-outline-warning btn-sm">Змінити пароль</a>
+        </div>
+    </div>
+
+    <h3>Мої опубліковані статті</h3>
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">Ви ще не опублікували жодної статті.</p>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var article in Model)
+            {
+                <li class="list-group-item mb-2">
+                    <h5>@article.Title</h5>
+                    <p>@article.Content</p>
+                    <small class="text-muted">Опубліковано: @article.CreatedAt.ToString("g")</small>
+                </li>
+            }
+        </ul>
+    }
+</div>

@@ -1,0 +1,39 @@
+@model IEnumerable<UserNotesApp.Models.Article>
+
+@{
+    ViewData["Title"] = "Головна - Блог";
+}
+
+<div class="container mt-4">
+    <h2>Статті блогу</h2>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <p>
+            <a asp-action="Create" class="btn btn-primary">Додати нову статтю</a>
+        </p>
+    }
+
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">Поки що немає жодної статті.</p>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var article in Model)
+            {
+                <div class="list-group-item list-group-item-action mb-3 shadow-sm rounded">
+                    <h4 class="mb-1">@article.Title</h4>
+                    <p class="mb-1">@article.Content</p>
+                    <small class="text-muted">
+                        Автор: <strong>@(article.User?.Email ?? "Невідомий")</strong> | 
+                        Дата публікації: @article.CreatedAt.ToString("g")
+                    </small>
+                </div>
+            }
+        </div>
+    }
+</div>

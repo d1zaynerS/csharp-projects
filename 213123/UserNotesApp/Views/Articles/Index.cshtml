@@ -1,0 +1,67 @@
+@model IEnumerable<UserNotesApp.Models.Article>
+
+@{
+    ViewData["Title"] = "Головна - Блог";
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<div class="container mt-4">
+    <h2>Статті блогу</h2>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <p>
+            <a asp-action="Create" class="btn btn-primary">Додати новий пост</a>
+        </p>
+    }
+
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">Поки що немає жодного доступного посту.</p>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var article in Model)
+            {
+                <div class="list-group-item list-group-item-action mb-3 shadow-sm rounded @(article.IsHiddenByModerator ? "bg-light border-danger" : "")">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h4 class="mb-1">@article.Title</h4>
+                        <small class="badge bg-secondary">@article.Visibility</small>
+                    </div>
+                    
+                    <p class="mb-1">@article.Content</p>
+                    
+                    @if (article.IsHiddenByModerator)
+                    {
+                        <p class="text-danger fw-bold mb-1">[Приховано модератором]</p>
+                    }
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small class="text-muted">
+                            Автор: <strong>@(article.User?.Email ?? "Невідомий")</strong> | 
+                            Дата: @article.CreatedAt.ToString("g")
+                        </small>
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+                        {
+                            <form asp-action="ToggleHide" method="post">
+                                <input type="hidden" name="id" value="@article.Id" />
+                                @if (article.IsHiddenByModerator)
+                                {
+                                    <button type="submit" class="btn btn-outline-success btn-sm">Відновити</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Приховати (Модератор)</button>
+                                }
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

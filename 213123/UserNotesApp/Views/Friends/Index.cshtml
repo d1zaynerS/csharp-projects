@@ -1,0 +1,94 @@
+@model IEnumerable<UserNotesApp.Models.Friendship>
+
+@{
+    ViewData["Title"] = "Керування друзями";
+    var allUsers = ViewBag.AllUsers as List<User>;
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<div class="container mt-4">
+    <h2>Мої друзі та заявки</h2>
+    <hr />
+
+    <h3>Список друзів</h3>
+    @if (!Model.Any(f => f.IsAccepted))
+    {
+        <p class="text-muted">У вас поки немає друзів.</p>
+    }
+    else
+    {
+        <ul class="list-group mb-4">
+            @foreach (var item in Model.Where(f => f.IsAccepted))
+            {
+                var friend = item.SenderId == currentUserId ? item.Receiver : item.Sender;
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@friend?.Email</span>
+                    <form asp-action="RemoveFriend" method="post">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Видалити з друзів</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+
+    <h3>Вхідні заявки в друзі</h3>
+    @if (!Model.Any(f => !f.IsAccepted && f.ReceiverId == currentUserId))
+    {
+        <p class="text-muted">Немає вхідних заявок.</p>
+    }
+    else
+    {
+        <ul class="list-group mb-4">
+            @foreach (var item in Model.Where(f => !f.IsAccepted && f.ReceiverId == currentUserId))
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@item.Sender?.Email</span>
+                    <div>
+                        <form asp-action="AcceptRequest" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Прийняти</button>
+                        </form>
+                        <form asp-action="RemoveFriend" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-secondary btn-sm">Відхилити</button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+
+    <h3>Знайти нових друзів</h3>
+    @if (allUsers != null && allUsers.Any())
+    {
+        <ul class="list-group">
+            @foreach (var user in allUsers)
+            {
+                var friendship = Model.FirstOrDefault(f => f.SenderId == user.Id || f.ReceiverId == user.Id);
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@user.Email</span>
+                    @if (friendship == null)
+                    {
+                        <form asp-action="SendRequest" method="post">
+                            <input type="hidden" name="receiverId" value="@user.Id" />
+                            <button type="submit" class="btn btn-primary btn-sm">Додати в друзі</button>
+                        </form>
+                    }
+                    else if (friendship.IsAccepted)
+                    {
+                        <span class="badge bg-success">Вже в друзях</span>
+                    }
+                    else if (friendship.SenderId == currentUserId)
+                    {
+                        <span class="badge bg-warning text-dark">Заявка надіслана</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-info text-dark">Отримує вашу заявку</span>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>

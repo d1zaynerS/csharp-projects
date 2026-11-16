@@ -1,0 +1,50 @@
+﻿@model List<TaskManagerApp.Models.UserNote>
+
+<h2>Керування завданнями та нотатками</h2>
+
+
+<form method="get" asp-action="Index" class="row g-2 mb-4 mt-2">
+    <div class="col-auto">
+        <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Пошук нотаток..." />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Шукати</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Скинути</a>
+    </div>
+</form>
+
+
+<div class="card p-3 mb-4">
+    <h4>Додати нову нотатку</h4>
+    <form asp-action="Create" method="post">
+        <div class="mb-2">
+            <input type="text" name="title" class="form-control" placeholder="Заголовок" required />
+        </div>
+        <div class="mb-2">
+            <textarea name="content" class="form-control" placeholder="Текст нотатки"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Додати</button>
+    </form>
+</div>
+
+
+<div class="row">
+    @if (!Model.Any())
+    {
+        <p class="text-muted">Нотаток не знайдено.</p>
+    }
+    @foreach (var note in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h5>@note.Title</h5>
+                <p>@note.Content</p>
+                <small class="text-muted mb-2">@note.CreatedAt.ToString("g")</small>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@note.Id" />
+                    <button type="submit" class="btn btn-danger btn-sm">Видалити</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>

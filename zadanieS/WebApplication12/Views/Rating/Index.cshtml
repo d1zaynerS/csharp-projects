@@ -1,0 +1,22 @@
+@using WebApplication12.Helpers
+@model IEnumerable<WebApplication12.Models.ProductRating>
+
+<h2>Оцінки товарів</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Рейтинг</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@Html.StarRating(p.Rating) (@p.Rating/5)</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,69 @@
+@model IEnumerable<UserNotesApp.Models.User>
+
+@{
+    ViewData["Title"] = "Панель адміністратора";
+    var userRoles = ViewBag.UserRoles as Dictionary<User, IList<string>>;
+}
+
+<div class="container mt-4">
+    <h2>Панель адміністратора — Користувачі</h2>
+    <hr />
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Статус блокування</th>
+                <th>Дії з ролями</th>
+                <th>Блокування</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                var roles = userRoles != null && userRoles.ContainsKey(user) ? userRoles[user] : new List<string>();
+                var isLocked = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow;
+
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@(string.Join(", ", roles))</td>
+                    <td>
+                        @if (isLocked)
+                        {
+                            <span class="text-danger fw-bold">Заблоковано</span>
+                        }
+                        else
+                        {
+                            <span class="text-success">Активний</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="ChangeRole" method="post" class="d-inline">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <select name="newRole" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                <option value="">Змінити роль...</option>
+                                <option value="User">User</option>
+                                <option value="Moderator">Moderator</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="ToggleLock" method="post" class="d-inline">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            @if (isLocked)
+                            {
+                                <button type="submit" class="btn btn-success btn-sm">Розблокувати</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-danger btn-sm">Заблокувати</button>
+                            }
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

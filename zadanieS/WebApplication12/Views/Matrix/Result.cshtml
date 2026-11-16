@@ -1,0 +1,23 @@
+@{
+    int size = ViewBag.Size;
+    int[,] result = ViewBag.Result;
+    string op = ViewBag.Operation;
+}
+
+<h2>Результат (@op)</h2>
+
+<div class="mt-3">
+    @for (int i = 0; i < size; i++)
+    {
+        <div class="d-flex mb-1">
+            @for (int j = 0; j < size; j++)
+            {
+                <div class="border p-2 me-1 text-center" style="width: 50px; background-color: #f8f9fa;">
+                    @result[i, j]
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<a asp-action="Index" class="btn btn-secondary mt-3">Назад</a>

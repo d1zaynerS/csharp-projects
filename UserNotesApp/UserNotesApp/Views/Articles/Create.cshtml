@@ -1,0 +1,28 @@
+@model UserNotesApp.Models.Article
+
+@{
+    ViewData["Title"] = "Створити статтю";
+}
+
+<div class="container mt-4">
+    <h2>Створити нову статтю блогу</h2>
+
+    <form asp-action="Create" method="post" class="mt-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <div class="form-group mb-3">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label asp-for="Content" class="control-label"></label>
+            <textarea asp-for="Content" class="form-control" rows="6"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        
+        <button type="submit" class="btn btn-success">Опублікувати</button>
+        <a asp-action="Index" class="btn btn-secondary">Назад до списку</a>
+    </form>
+</div>

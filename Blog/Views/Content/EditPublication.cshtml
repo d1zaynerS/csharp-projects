@@ -1,0 +1,83 @@
+﻿@model Blog.ViewModels.PublicationViewModel
+
+@{
+    ViewBag.Title = "Редагування публікації";
+}
+
+<div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="pb-2 border-bottom">Редагувати публікацію</h2>
+    <a asp-controller="Home" asp-action="Index">Головна</a> / <a asp-controller="Content" asp-action="Index">Управління матеріалом</a>
+    <div class="row g-4 py-5 row-cols-1">
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <form asp-controller="Content" asp-action="EditPublication" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label">Заголовок</label>
+                    <input type="text" asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Content" class="control-label">Вміст</label>
+                    <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="File" class="control-label">Зображення</label>
+                    <input type="file" class="form-control" asp-for="File" accept="image/*" />
+                </div>
+
+                <hr class="featurette-divider">
+
+                <div class="form-group">
+                    <label class="control-label">Категорії</label>
+                    <ul class="media-list overflow-auto ulr">
+                        @if (Model.SelectListCategories != null)
+                        {
+                            @foreach (var category in Model.SelectListCategories)
+                            {
+                                <li>
+                                    <div class="checkbox sidebar-content list-group-item d-flex justify-content-between lh-condensed">
+                                        <label>
+                                            <input id="@category.Value" type="checkbox" name="SelectedCategories" value="@category.Value" checked="@category.Selected" class="green">
+                                            @category.Text
+                                        </label>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <hr class="featurette-divider">
+
+                <div class="form-group">
+                    <label asp-for="SeoDescription" class="control-label">Seo опис</label>
+                    <textarea asp-for="SeoDescription" class="form-control" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Keywords" class="control-label">Ключові слова</label>
+                    <input type="text" asp-for="Keywords" class="form-control" />
+                </div>
+                <br />
+
+                <div class="form-group">
+                    @Html.AntiForgeryToken()
+                    <input type="submit" value="Зберегти" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Назад</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
